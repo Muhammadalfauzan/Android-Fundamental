@@ -10,5 +10,5 @@
 
     <item android:id="@+id/finishedFragment"
         android:title="@string/menu_finished"
-        android:icon="@drawable/baseline_upcoming_24"/>
+        android:icon="@drawable/round_view_quilt_24"/>
 </menu>

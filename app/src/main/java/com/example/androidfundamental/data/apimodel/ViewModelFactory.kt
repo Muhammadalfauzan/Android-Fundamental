@@ -11,7 +11,7 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EventViewModel::class.java)) {
-            return EventViewModel(Injection.provideEventRepository(context)) as T
+            return EventViewModel(Injection.provideEventRepository()) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

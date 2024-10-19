@@ -38,7 +38,7 @@ class UpcomingFragment : Fragment() {
 
         // Inisialisasi ViewModel dengan Factory
         val factory = ViewModelFactory(requireContext()) // Buat instance dari ViewModelFactory
-        eventViewModel = ViewModelProvider(this, factory).get(EventViewModel::class.java)
+        eventViewModel = ViewModelProvider(this, factory)[EventViewModel::class.java]
 
         // Inisialisasi RecyclerView dan Adapter
         adapter = AdapterUpcoming()
@@ -50,7 +50,7 @@ class UpcomingFragment : Fragment() {
         // Observasi data dari ViewModel
         eventViewModel.events.observe(viewLifecycleOwner) { events ->
             Log.d("UpcomingFragment", "Events received from ViewModel: ${events?.size}")
-            if (events != null && events.isNotEmpty()) {
+            if (!events.isNullOrEmpty()) {
                 Log.d("UpcomingFragment", "First event: ${events[0]?.name}")
             }
             adapter.submitList(events)
