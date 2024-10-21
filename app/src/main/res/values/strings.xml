@@ -6,4 +6,7 @@
     <string name="menu_upcoming">Upcoming</string>
     <string name="menu_finished">Finished</string>
     <string name="searchbar_hint">Dev Coach</string>
+
+    <string name="image_event">Gambar Event</string>
+    <string name="nama_acara">DevCoach 174: Flutter | Bentangkan Sayap Kreativitasmu dengan Flutter Desktop</string>
 </resources>

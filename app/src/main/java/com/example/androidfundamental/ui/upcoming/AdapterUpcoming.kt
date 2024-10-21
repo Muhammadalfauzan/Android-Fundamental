@@ -1,11 +1,12 @@
 package com.example.androidfundamental.ui.upcoming
 
-import android.util.Log
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,73 +14,101 @@ import com.bumptech.glide.Glide
 import com.example.androidfundamental.R
 import com.example.androidfundamental.data.apimodel.ListEventsItem
 
-class AdapterUpcoming : ListAdapter<ListEventsItem, AdapterUpcoming.ListViewHolder>(DIFF_CALLBACK) {
+class AdapterUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
-    private var onItemClickAdapter: OnItemClickAdapter? = null
+    private var onItemClickListener: ((ListEventsItem) -> Unit)? = null
+    private var isLoading = true // Flag untuk menandakan loading state
+    private var shimmerItemCount = 10 // Jumlah item shimmer saat loading
 
+    // ViewHolder untuk shimmer loading
+    class ShimmerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val shimmerFrameLayout: com.facebook.shimmer.ShimmerFrameLayout =
+            itemView.findViewById(R.id.shimmerFrame)
+    }
+
+    // ViewHolder untuk event
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageEvent: ImageView = itemView.findViewById(R.id.imgLogo)
         private val eventName: TextView = itemView.findViewById(R.id.judulEvent)
-        //private val eventDate: TextView = itemView.findViewById(R.id.tvEventDate)
 
-        fun bind(data: ListEventsItem) {
-            // Menggunakan Glide untuk memuat gambar dari URL
-            Glide.with(itemView.context)
-                .load(data.imageLogo) // URL dari gambar
-                .into(imageEvent)
+        fun bind(data: ListEventsItem?) {
+            if (data != null) {
+                eventName.text = data.name
+                Glide.with(itemView.context)
+                    .load(data.imageLogo)
+                    .fitCenter()
+                    .into(imageEvent)
 
-            // Mengatur teks untuk nama event dan tanggal event
-            eventName.text = data.name
-          //  eventDate.text = data.beginTime
-
-            // Mengatur listener untuk klik item
-            itemView.setOnClickListener {
-                onItemClickAdapter?.onItemClick(data)
+                itemView.setOnClickListener {
+                    onItemClickListener?.invoke(data)
+                }
             }
         }
     }
 
-    // Set listener untuk klik item
-    fun setOnItemClickListener(listener: OnItemClickAdapter) {
-        this.onItemClickAdapter = listener
+    // Fungsi untuk menampilkan shimmer effect
+    @SuppressLint("NotifyDataSetChanged")
+    fun showShimmerEffect() {
+        isLoading = true
+        notifyDataSetChanged() // Refresh adapter untuk memulai loading
     }
 
-    // Inflate layout item dan buat ViewHolder
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_upcoming, parent, false)
-        return ListViewHolder(view)
+    // Fungsi untuk menyembunyikan shimmer effect
+    fun hideShimmerEffect() {
+        isLoading = false
+        notifyDataSetChanged() // Refresh adapter untuk menampilkan data
     }
 
-    // Menghubungkan data dengan ViewHolder
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-
-        val event = getItem(position)
-        if (event != null) {
-            Log.d("AdapterUpcoming", "Binding item at position: $position, event: ${event.name}")
-            holder.bind(event)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_LOADING) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.shimmer_loading, parent, false)
+            ShimmerViewHolder(view)
         } else {
-            Log.e("AdapterUpcoming", "Event at position $position is null")
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_upcoming, parent, false)
+            ListViewHolder(view)
         }
     }
 
-    // Interface untuk menangani klik item
-    interface OnItemClickAdapter {
-        fun onItemClick(data: ListEventsItem)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (isLoading) {
+            if (holder is ShimmerViewHolder) {
+                holder.shimmerFrameLayout.startShimmer() // Mulai shimmer saat loading
+            }
+        } else {
+            if (holder is ListViewHolder) {
+                getItem(position)?.let { holder.bind(it) }
+            }
+        }
     }
 
-    // DiffUtil untuk optimasi pembaruan data
-    companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListEventsItem>() {
-            override fun areItemsTheSame(oldItem: ListEventsItem, newItem: ListEventsItem): Boolean {
-                // Perbandingan berdasarkan ID event
-                return oldItem.id == newItem.id
-            }
+    override fun getItemCount(): Int {
+        return if (isLoading) {
+            shimmerItemCount // Tampilkan placeholder shimmer sesuai dengan jumlah yang diinginkan
+        } else {
+            super.getItemCount() // Tampilkan jumlah data yang sebenarnya saat tidak loading
+        }
+    }
 
-            override fun areContentsTheSame(oldItem: ListEventsItem, newItem: ListEventsItem): Boolean {
-                // Periksa apakah semua konten sama
-                return oldItem == newItem
-            }
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoading) VIEW_TYPE_LOADING else VIEW_TYPE_NORMAL
+    }
+
+    fun setOnItemClickListener(listener: (ListEventsItem) -> Unit) {
+        this.onItemClickListener = listener
+    }
+
+    companion object {
+        const val VIEW_TYPE_LOADING = 0
+        const val VIEW_TYPE_NORMAL = 1
+
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListEventsItem>() {
+            override fun areItemsTheSame(oldItem: ListEventsItem, newItem: ListEventsItem) =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: ListEventsItem, newItem: ListEventsItem) =
+                oldItem == newItem
         }
     }
 }

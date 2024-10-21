@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginHorizontal="8dp">
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
@@ -11,11 +12,9 @@
 
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="220dp"
         android:scaleType="centerCrop"
-        android:adjustViewBounds ="true"
-        android:layout_centerInParent="true"
         android:src="@drawable/dicoding_event"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

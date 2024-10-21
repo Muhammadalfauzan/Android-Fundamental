@@ -1,6 +1,8 @@
 package com.example.androidfundamental.data.apimodel
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class ResponseUpcoming(
 
@@ -13,7 +15,7 @@ data class ResponseUpcoming(
 	@field:SerializedName("message")
 	val message: String? = null
 )
-
+@Parcelize
 data class ListEventsItem(
 
 	@field:SerializedName("summary")
@@ -57,4 +59,4 @@ data class ListEventsItem(
 
 	@field:SerializedName("category")
 	val category: String? = null
-)
+) :Parcelable

@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id ("kotlin-parcelize")
+    id ("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -58,4 +60,6 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
 }

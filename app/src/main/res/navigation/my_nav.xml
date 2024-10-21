@@ -9,10 +9,12 @@
         android:id="@+id/finishedFragment"
         android:name="com.example.androidfundamental.ui.fragment.FinishedFragment"
         android:label="fragment_finished"
+        android:launchMode="singleTop"
         tools:layout="@layout/fragment_finished" >
+
         <action
-            android:id="@+id/action_finishedFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_finishedFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -31,5 +33,18 @@
         <action
             android:id="@+id/action_upcomingFragment_to_finishedFragment"
             app:destination="@id/finishedFragment" />
+        <action
+            android:id="@+id/action_upcomingFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.androidfundamental.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_finishedFragment"
+            app:destination="@id/finishedFragment"
+            />
     </fragment>
 </navigation>
