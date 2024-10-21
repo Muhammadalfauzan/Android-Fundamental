@@ -1,4 +1,4 @@
-package com.example.androidfundamental
+package com.example.androidfundamental.utils
 
 sealed class NetworkResult<T>(
     val data: T? = null,

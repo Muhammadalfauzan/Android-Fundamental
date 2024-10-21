@@ -6,19 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.HomeFragment">
 
-    <!-- AppBarLayout untuk menangani Toolbar dengan behavior scroll -->
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <!-- Toolbar sebagai ActionBar -->
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:titleTextColor="@color/black"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="Dicoding Event" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,8 +37,10 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upcoming Events"
+            android:text="@string/upcoming_event"
             android:textSize="18sp"
+            android:fontFamily="@font/poppins_semi_bold"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -58,7 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textSize="18sp"
-            android:text="Finished Events"
+            android:fontFamily="@font/poppins_semi_bold"
+            android:layout_marginStart="16dp"
+            android:text="@string/finished_event"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rvUpcomingHome" />
 

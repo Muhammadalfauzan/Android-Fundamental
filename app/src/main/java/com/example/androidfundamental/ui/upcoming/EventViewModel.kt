@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.androidfundamental.NetworkResult
+import com.example.androidfundamental.utils.NetworkResult
 import com.example.androidfundamental.data.apimodel.EventRepository
 import com.example.androidfundamental.data.apimodel.ListEventsItem
 import com.example.androidfundamental.data.apimodel.ResponseUpcoming
@@ -28,28 +28,30 @@ class EventViewModel(
 
     // LiveData untuk upcoming events
     private val _upcomingEvents = MutableLiveData<NetworkResult<List<ListEventsItem?>>>()
-    val upcomingEvents: LiveData<NetworkResult<List<ListEventsItem?>>> = _upcomingEvents.distinctUntilChanged()
+    val upcomingEvents: LiveData<NetworkResult<List<ListEventsItem?>>> =
+        _upcomingEvents.distinctUntilChanged()
 
     // LiveData untuk finished events
     private val _finishedEvents = MutableLiveData<NetworkResult<List<ListEventsItem?>>>()
-    val finishedEvents: LiveData<NetworkResult<List<ListEventsItem?>>> = _finishedEvents.distinctUntilChanged()
+    val finishedEvents: LiveData<NetworkResult<List<ListEventsItem?>>> =
+        _finishedEvents.distinctUntilChanged()
 
     // LiveData untuk event detail
     private val _eventDetail = MutableLiveData<NetworkResult<ListEventsItem>>()
     val eventDetail: LiveData<NetworkResult<ListEventsItem>> = _eventDetail
 
     // Query terakhir yang digunakan
-    var lastQuery: String?
-        get() = savedStateHandle.get("lastQuery")
+    private var lastQuery: String?
+        get() = savedStateHandle["lastQuery"]
         set(value) = savedStateHandle.set("lastQuery", value)
 
     // Menyimpan apakah data sudah di-fetch
     var hasFetchedUpcomingEvents: Boolean
-        get() = savedStateHandle.get("hasFetchedUpcomingEvents") ?: false
+        get() = savedStateHandle["hasFetchedUpcomingEvents"] ?: false
         set(value) = savedStateHandle.set("hasFetchedUpcomingEvents", value)
 
     var hasFetchedFinishedEvents: Boolean
-        get() = savedStateHandle.get("hasFetchedFinishedEvents") ?: false
+        get() = savedStateHandle["hasFetchedFinishedEvents"] ?: false
         set(value) = savedStateHandle.set("hasFetchedFinishedEvents", value)
 
     // Fetch upcoming events
@@ -61,19 +63,15 @@ class EventViewModel(
                 if (hasInternetConnection()) {
                     try {
                         val response = repository.getEvents(active = 1, query = query, limit = limit)
-                        if (response.isSuccessful) {
-                            val body = response.body()
-                            if (body != null && body.listEvents != null) {
-                                _upcomingEvents.postValue(NetworkResult.Success(body.listEvents))
-                                hasFetchedUpcomingEvents = true
-                                lastQuery = query // Simpan query yang terakhir digunakan
-                                savedStateHandle.set("upcomingEvents", body.listEvents) // Simpan data
-                            } else {
-                                _upcomingEvents.postValue(NetworkResult.Error("No upcoming events found"))
-                            }
-                        } else {
-                            _upcomingEvents.postValue(NetworkResult.Error("Failed to load upcoming events"))
+                        val result = handleEventResponse(response)
+                        _upcomingEvents.postValue(result) // Gunakan fungsi handleEventResponse
+
+                        if (result is NetworkResult.Success) {
+                            hasFetchedUpcomingEvents = true
+                            lastQuery = query // Simpan query terakhir
+                            savedStateHandle["upcomingEvents"] = result.data // Simpan data
                         }
+
                     } catch (e: Exception) {
                         _upcomingEvents.postValue(NetworkResult.Error("Error: ${e.message}"))
                     }
@@ -82,7 +80,9 @@ class EventViewModel(
                 }
             }
         } else {
-            _upcomingEvents.postValue(NetworkResult.Success(savedStateHandle.get("upcomingEvents") ?: emptyList()))
+            _upcomingEvents.postValue(
+                NetworkResult.Success(savedStateHandle["upcomingEvents"] ?: emptyList())
+            )
         }
     }
 
@@ -94,20 +94,17 @@ class EventViewModel(
 
                 if (hasInternetConnection()) {
                     try {
-                        val response = repository.getEvents(active = 0, query = query, limit = limit)
-                        if (response.isSuccessful) {
-                            val body = response.body()
-                            if (body != null && body.listEvents != null) {
-                                _finishedEvents.postValue(NetworkResult.Success(body.listEvents))
-                                hasFetchedFinishedEvents = true
-                                lastQuery = query // Simpan query yang terakhir digunakan
-                                savedStateHandle.set("finishedEvents", body.listEvents) // Simpan data
-                            } else {
-                                _finishedEvents.postValue(NetworkResult.Error("No finished events found"))
-                            }
-                        } else {
-                            _finishedEvents.postValue(NetworkResult.Error("Failed to load finished events"))
+                        val response =
+                            repository.getEvents(active = 0, query = query, limit = limit)
+                        val result = handleEventResponse(response)
+                        _finishedEvents.postValue(result) // Gunakan fungsi handleEventResponse
+
+                        if (result is NetworkResult.Success) {
+                            hasFetchedFinishedEvents = true
+                            lastQuery = query // Simpan query terakhir
+                            savedStateHandle["finishedEvents"] = result.data // Simpan data
                         }
+
                     } catch (e: Exception) {
                         _finishedEvents.postValue(NetworkResult.Error("Error: ${e.message}"))
                     }
@@ -116,9 +113,12 @@ class EventViewModel(
                 }
             }
         } else {
-            _finishedEvents.postValue(NetworkResult.Success(savedStateHandle.get("finishedEvents") ?: emptyList()))
+            _finishedEvents.postValue(
+                NetworkResult.Success(savedStateHandle["finishedEvents"] ?: emptyList())
+            )
         }
     }
+
     // Fetch event detail dari repository berdasarkan event ID
     fun fetchEventDetail(id: Int) {
         viewModelScope.launch {

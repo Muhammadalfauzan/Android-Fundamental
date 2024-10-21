@@ -9,4 +9,14 @@
 
     <string name="image_event">Gambar Event</string>
     <string name="nama_acara">DevCoach 174: Flutter | Bentangkan Sayap Kreativitasmu dengan Flutter Desktop</string>
+    <string name="finished_event">Finished Events</string>
+    <string name="upcoming_event">Upcoming Events</string>
+    <string name="dicoding_event">Dicoding Event</string>
+    <string name="penyelenggara">Diselenggarakan oleh : </string>
+    <string name="register">Register </string>
+    <string name="informasi">Informasi : </string>
+    <string name="deskripsi">ini informasi deskripsi </string>
+    <string name="sisa_kouta">Sisa Kouta : </string>
+    <string name="kouta">150 </string>
+    <string name="waktu_acara">Waktu acara </string>
 </resources>

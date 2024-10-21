@@ -1,16 +1,13 @@
 package com.example.androidfundamental.data.apimodel
 
 import com.example.androidfundamental.ui.upcoming.EventViewModel
-import com.example.androidfundamental.Injection
 
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
-import com.example.androidfundamental.data.apimodel.EventRepository
 
 class ViewModelFactory(
     private val application: Application,

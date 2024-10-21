@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_homeFragment_to_upcomingFragment"
             app:destination="@id/upcomingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/upcomingFragment"
@@ -39,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.androidfundamental.DetailFragment"
+        android:name="com.example.androidfundamental.ui.fragment.DetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" >
         <action

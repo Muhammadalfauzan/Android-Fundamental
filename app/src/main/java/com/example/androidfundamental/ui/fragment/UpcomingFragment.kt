@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.androidfundamental.Injection
-import com.example.androidfundamental.NetworkResult
+import com.example.androidfundamental.utils.Injection
+import com.example.androidfundamental.utils.NetworkResult
 import com.example.androidfundamental.R
 import com.example.androidfundamental.ui.upcoming.AdapterUpcoming
 import com.example.androidfundamental.ui.upcoming.EventViewModel

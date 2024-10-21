@@ -1,57 +1,55 @@
-package com.example.androidfundamental.ui.upcoming
+package com.example.androidfundamental.ui.home
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.androidfundamental.R
 import com.example.androidfundamental.data.apimodel.ListEventsItem
+import com.example.androidfundamental.databinding.ItemUpcomingHomeBinding
+import com.example.androidfundamental.databinding.ShimmerUpcomingBinding
 
 @SuppressLint("NotifyDataSetChanged")
-class AdapterUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var onItemClickListener: ((ListEventsItem) -> Unit)? = null
-    private var isLoading = true // Flag untuk menandakan loading state
-    private var shimmerItemCount = 10 // Jumlah item shimmer saat loading
+    private var isLoading = true
+    private var shimmerItemCount = 3
 
-    // ViewHolder untuk shimmer loading
-    class ShimmerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val shimmerFrameLayout: com.facebook.shimmer.ShimmerFrameLayout =
-            itemView.findViewById(R.id.shimmerFrame)
-    }
-
-    // ViewHolder untuk event
-    inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageEvent: ImageView = itemView.findViewById(R.id.imgLogo)
-        private val eventName: TextView = itemView.findViewById(R.id.judulEvent)
+    // ViewHolder untuk event menggunakan View Binding
+    inner class ListViewHolder(private val binding: ItemUpcomingHomeBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(data: ListEventsItem?) {
             if (data != null) {
-                eventName.text = data.name
-                Glide.with(itemView.context)
+                binding.judulEventHome.text = data.name
+                Glide.with(binding.root.context)
                     .load(data.imageLogo)
                     .fitCenter()
-                    .into(imageEvent)
+                    .into(binding.imgLogoHome)
 
-                itemView.setOnClickListener {
+                // Listener untuk klik item
+                binding.root.setOnClickListener {
                     onItemClickListener?.invoke(data)
                 }
             }
         }
     }
 
+    // ViewHolder untuk shimmer menggunakan View Binding
+    inner class ShimmerViewHolder(binding: ShimmerUpcomingBinding) : RecyclerView.ViewHolder(binding.root) {
+        val shimmerFrameLayout: com.facebook.shimmer.ShimmerFrameLayout = binding.shimmerUpcoming
+    }
+
+    // Fungsi untuk menampilkan shimmer effect
+
     fun showShimmerEffect() {
         isLoading = true
         notifyDataSetChanged() // Refresh adapter untuk memulai loading
     }
 
+    // Fungsi untuk menyembunyikan shimmer effect
     fun hideShimmerEffect() {
         isLoading = false
         notifyDataSetChanged() // Refresh adapter untuk menampilkan data
@@ -59,24 +57,23 @@ class AdapterUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIF
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_LOADING) {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.shimmer_loading, parent, false)
-            ShimmerViewHolder(view)
+            val binding = ShimmerUpcomingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ShimmerViewHolder(binding)
         } else {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_upcoming, parent, false)
-            ListViewHolder(view)
+            val binding = ItemUpcomingHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ListViewHolder(binding)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (isLoading) {
             if (holder is ShimmerViewHolder) {
-                holder.shimmerFrameLayout.startShimmer() // Mulai shimmer saat loading
+                holder.shimmerFrameLayout.startShimmer()
             }
         } else {
+            val event = getItem(position) // Mengambil item dengan aman
             if (holder is ListViewHolder) {
-                getItem(position)?.let { holder.bind(it) }
+                holder.bind(event)
             }
         }
     }
@@ -89,12 +86,18 @@ class AdapterUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIF
         }
     }
 
+    // Menentukan ViewType (shimmer atau normal)
     override fun getItemViewType(position: Int): Int {
-        return if (isLoading) VIEW_TYPE_LOADING else VIEW_TYPE_NORMAL
+        return if (isLoading) {
+            VIEW_TYPE_LOADING
+        } else {
+            VIEW_TYPE_NORMAL
+        }
     }
 
+    // Fungsi untuk mengatur listener klik
     fun setOnItemClickListener(listener: (ListEventsItem) -> Unit) {
-        this.onItemClickListener = listener
+        onItemClickListener = listener
     }
 
     companion object {

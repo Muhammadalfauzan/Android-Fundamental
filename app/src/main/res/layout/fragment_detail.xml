@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".DetailFragment">
+    tools:context=".ui.fragment.DetailFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,14 +15,14 @@
         <ImageView
             android:id="@+id/img_logoDetail"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="250dp"
             android:contentDescription="@string/image_event"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
-            android:src="@drawable/dicoding_event"
+            android:scaleType="fitCenter"
+            android:src="@drawable/placeholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/tv_namaAcara"
@@ -32,6 +32,8 @@
             android:text="@string/nama_acara"
             android:textAlignment="center"
             android:textSize="18sp"
+            android:fontFamily="@font/poppins_regular"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/img_logoDetail" />
@@ -40,9 +42,10 @@
             android:id="@+id/lb_penyelenggara"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Diselenggarakan oleh : "
+            android:text="@string/penyelenggara"
             android:layout_marginStart="16dp"
             android:textSize="16sp"
+            android:fontFamily="@font/poppins_regular"
             android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_namaAcara" />
@@ -51,7 +54,8 @@
             android:id="@+id/tv_diselengara"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dicoding Event"
+            android:text="@string/dicoding_event"
+            android:fontFamily="@font/poppins_regular"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/lb_penyelenggara"
             app:layout_constraintTop_toTopOf="@+id/lb_penyelenggara" />
@@ -60,8 +64,9 @@
             android:id="@+id/tv_waktuAcara"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Waktu acara"
+            android:text="@string/waktu_acara"
             android:textStyle="bold"
+            android:fontFamily="@font/poppins_semi_bold"
             android:textSize="16sp"
             android:layout_marginEnd="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,9 +76,10 @@
             android:id="@+id/lb_sisaKouta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sisa Kouta : "
+            android:text="@string/sisa_kouta"
             android:layout_marginStart="16sp"
             android:textSize="16sp"
+            android:fontFamily="@font/poppins_semi_bold"
             android:textStyle="bold"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,8 +89,9 @@
             android:id="@+id/tv_sisaKouta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="150"
+            android:text="@string/kouta"
             android:textSize="16sp"
+            android:fontFamily="@font/poppins_semi_bold"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/lb_sisaKouta"
             app:layout_constraintTop_toTopOf="@+id/lb_sisaKouta" />
@@ -95,7 +102,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
             android:textSize="16sp"
-            android:text="Informasi :"
+            android:fontFamily="@font/poppins_regular"
+            android:text="@string/informasi"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lb_sisaKouta" />
 
@@ -103,8 +111,8 @@
             android:id="@+id/tv_informasi"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="ini informasi deskripsi"
-
+            android:text="@string/deskripsi"
+            android:fontFamily="@font/poppins_regular"
             android:layout_marginHorizontal="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +134,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="10dp"
-            android:text="Register"
+            android:fontFamily="@font/poppins_regular"
+            android:text="@string/register"
             app:cornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/tv_informasi"

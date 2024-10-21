@@ -1,4 +1,4 @@
-package com.example.androidfundamental
+package com.example.androidfundamental.utils
 
 import com.example.androidfundamental.data.api.ApiConfig
 import com.example.androidfundamental.data.apimodel.EventRepository
