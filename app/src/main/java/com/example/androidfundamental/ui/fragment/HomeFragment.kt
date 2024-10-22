@@ -74,7 +74,7 @@ class HomeFragment : Fragment() {
 
     private fun setupAdapterClickListeners() {
         // Navigate to DetailFragment when an item is clicked in upcomingAdapter
-        upcomingAdapter.setOnItemClickListener { data ->
+        upcomingAdapter.setOnItemClickListenerhome { data ->
             navigateToDetailFragment(data.id)
         }
 
@@ -133,7 +133,8 @@ class HomeFragment : Fragment() {
                     finishedAdapter.hideShimmerEffect()
                     result.data?.let { events ->
                         if (events.isNotEmpty()) {
-                            finishedAdapter.submitList(events)
+                            val limitedEvents = if (events.size > 5) events.subList(0,5) else events
+                            finishedAdapter.submitList(limitedEvents)
                         } else {
                             Toast.makeText(context, "No finished events found", Toast.LENGTH_SHORT)
                                 .show()

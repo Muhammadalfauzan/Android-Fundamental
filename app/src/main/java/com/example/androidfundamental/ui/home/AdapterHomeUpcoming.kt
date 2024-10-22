@@ -96,7 +96,7 @@ class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
     }
 
     // Fungsi untuk mengatur listener klik
-    fun setOnItemClickListener(listener: (ListEventsItem) -> Unit) {
+    fun setOnItemClickListenerhome(listener: (ListEventsItem) -> Unit) {
         onItemClickListener = listener
     }
 

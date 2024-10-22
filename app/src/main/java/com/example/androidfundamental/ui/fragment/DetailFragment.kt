@@ -39,14 +39,12 @@ class DetailFragment : Fragment() {
         val factory = ViewModelFactory(
             application = requireActivity().application,
             repository = Injection.provideEventRepository(),
-            owner = this, // 'this' merujuk pada Fragment sebagai SavedStateRegistryOwner
+            owner = this,
         )
 
-        eventViewModel = ViewModelProvider(this, factory).get(EventViewModel::class.java)
+        eventViewModel = ViewModelProvider(this, factory)[EventViewModel::class.java]
 
 
-
-        // Ambil ID event dari arguments
         val eventId = arguments?.getInt("event_id") ?: 0
         if (eventId != 0) {
             eventViewModel.fetchEventDetail(eventId)
@@ -58,12 +56,13 @@ class DetailFragment : Fragment() {
 
         observeViewModel()
     }
+
     private fun observeViewModel() {
         eventViewModel.eventDetail.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {
                     // Tampilkan indikator loading
-                    showLoadingIndicator()
+                    showShimmerDetail()
                 }
 
                 is NetworkResult.Success -> {
@@ -71,12 +70,12 @@ class DetailFragment : Fragment() {
                     result.data?.let { event ->
                         displayEventDetail(event)
                     }
-                    hideLoadingIndicator()
+                    hideShimmerDetail()
                 }
 
                 is NetworkResult.Error -> {
                     // Tampilkan pesan error
-                    hideLoadingIndicator()
+                    hideShimmerDetail()
                     showError(result.message)
                 }
             }
@@ -86,7 +85,8 @@ class DetailFragment : Fragment() {
     private fun displayEventDetail(event: ListEventsItem) {
         // Menampilkan detail event ke UI
         binding.tvNamaAcara.text = event.name
-        val htmlDescription = HtmlCompat.fromHtml(event.description.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val htmlDescription =
+            HtmlCompat.fromHtml(event.description.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.tvInformasi.text = htmlDescription
         Glide.with(this).load(event.imageLogo).into(binding.imgLogoDetail)
 
@@ -113,12 +113,43 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun showLoadingIndicator() {
-        binding.progresbar.visibility = View.VISIBLE
+    /*    private fun showLoadingIndicator() {
+            binding.progresbar.visibility = View.VISIBLE
+        }
+
+        private fun hideLoadingIndicator() {
+            binding.progresbar.visibility = View.GONE
+        }*/
+
+    private fun showShimmerDetail() {
+        binding.shimmerDetail.visibility = View.VISIBLE
+        binding.shimmerDetail.startShimmer()
+        binding.imgLogoDetail.visibility = View.GONE
+        binding.btnRegist.visibility = View.GONE
+        binding.tvNamaAcara.visibility = View.GONE
+        binding.lbPenyelenggara.visibility = View.GONE
+        binding.tvDiselengara.visibility = View.GONE
+        binding.lbSisaKouta.visibility = View.GONE
+        binding.tvSisaKouta.visibility = View.GONE
+        binding.tvWaktuAcara.visibility = View.GONE
+        binding.textView3.visibility = View.GONE
+        binding.tvInformasi.visibility = View.GONE
     }
 
-    private fun hideLoadingIndicator() {
-        binding.progresbar.visibility = View.GONE
+    private fun hideShimmerDetail() {
+        binding.shimmerDetail.stopShimmer()
+        binding.shimmerDetail.visibility = View.GONE
+        binding.imgLogoDetail.visibility = View.VISIBLE
+        binding.btnRegist.visibility = View.VISIBLE
+        binding.tvNamaAcara.visibility = View.VISIBLE
+        binding.lbPenyelenggara.visibility = View.VISIBLE
+        binding.tvDiselengara.visibility = View.VISIBLE
+        binding.lbSisaKouta.visibility = View.VISIBLE
+        binding.tvSisaKouta.visibility = View.VISIBLE
+        binding.tvWaktuAcara.visibility = View.VISIBLE
+        binding.textView3.visibility = View.VISIBLE
+        binding.tvInformasi.visibility = View.VISIBLE
+
     }
 
     private fun showError(message: String?) {

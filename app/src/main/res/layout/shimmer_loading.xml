@@ -17,8 +17,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_height="200dp"
+            android:background="@android:color/darker_gray" />
 
         <View
             android:layout_width="match_parent"

@@ -28,7 +28,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/nama_acara"
-            android:fontFamily="@font/poppins_regular"
+            android:fontFamily="@font/poppins_semi_bold"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imgLogoHome"

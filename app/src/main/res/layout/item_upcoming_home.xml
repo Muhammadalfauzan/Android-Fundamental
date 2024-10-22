@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
     android:layout_marginTop="8dp"
+    android:backgroundTint="@color/white"
     tools:ignore="TextSizeCheck">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +28,7 @@
             android:id="@+id/judulEventHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_regular"
+            android:fontFamily="@font/poppins_semi_bold"
             android:padding="10dp"
             android:text="@string/nama_acara"
             android:textAlignment="center"
