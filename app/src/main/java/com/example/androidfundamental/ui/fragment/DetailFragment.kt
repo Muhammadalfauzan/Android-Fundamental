@@ -18,6 +18,8 @@ import com.example.androidfundamental.data.apimodel.ListEventsItem
 import com.example.androidfundamental.data.apimodel.ViewModelFactory
 import com.example.androidfundamental.databinding.FragmentDetailBinding
 import com.example.androidfundamental.ui.upcoming.EventViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class DetailFragment : Fragment() {
@@ -35,7 +37,6 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Inisialisasi ViewModel
         val factory = ViewModelFactory(
             application = requireActivity().application,
             repository = Injection.provideEventRepository(),
@@ -61,12 +62,12 @@ class DetailFragment : Fragment() {
         eventViewModel.eventDetail.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {
-                    // Tampilkan indikator loading
+
                     showShimmerDetail()
                 }
 
                 is NetworkResult.Success -> {
-                    // Tampilkan detail event yang berhasil di-fetch
+
                     result.data?.let { event ->
                         displayEventDetail(event)
                     }
@@ -74,7 +75,6 @@ class DetailFragment : Fragment() {
                 }
 
                 is NetworkResult.Error -> {
-                    // Tampilkan pesan error
                     hideShimmerDetail()
                     showError(result.message)
                 }
@@ -83,26 +83,26 @@ class DetailFragment : Fragment() {
     }
 
     private fun displayEventDetail(event: ListEventsItem) {
-        // Menampilkan detail event ke UI
         binding.tvNamaAcara.text = event.name
         val htmlDescription =
             HtmlCompat.fromHtml(event.description.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.tvInformasi.text = htmlDescription
         Glide.with(this).load(event.imageLogo).into(binding.imgLogoDetail)
 
-        // Tampilkan informasi lain seperti owner, time, city, dll
         binding.tvDiselengara.text = event.ownerName
         binding.tvSisaKouta.text = event.quota.toString()
         binding.tvWaktuAcara.text = event.endTime
 
-        binding.tvSisaKouta.text = event.quota.toString()
-        binding.tvWaktuAcara.text = event.endTime
+        val qouta = event.quota ?: 0
+        val registrants = event.registrants ?: 0
 
-        // Set listener untuk button Register
+        val sisaKouta = (qouta- registrants).coerceAtLeast(0)
+        binding.tvSisaKouta.text = sisaKouta.toString()
+
+        binding.tvWaktuAcara.text = formatDateTime(event.beginTime, event.endTime)
+
         binding.btnRegist.setOnClickListener {
-            // Pastikan link untuk registrasi tersedia
             event.link?.let { url ->
-                // Intent untuk membuka URL di browser
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(url)
                 startActivity(intent)
@@ -110,6 +110,18 @@ class DetailFragment : Fragment() {
                 // Jika tidak ada link, tampilkan pesan error
                 Toast.makeText(context, "Link registrasi tidak tersedia", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+    private fun formatDateTime(beginTime: String?, endTime: String?): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault())
+
+        return try {
+            val beginDate = inputFormat.parse(beginTime.orEmpty())
+            val endDate = inputFormat.parse(endTime.orEmpty())
+            "${beginDate?.let { outputFormat.format(it) }} - ${endDate?.let { outputFormat.format(it) }}"
+        } catch (e: Exception) {
+            "Tanggal tidak valid"
         }
     }
 

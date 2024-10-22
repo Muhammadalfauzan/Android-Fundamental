@@ -64,7 +64,7 @@ class FinishedFragment : Fragment() {
         // Handle item click pada event
         adapter.setOnItemClickListener { data ->
             val bundle = Bundle().apply {
-                putInt("event_id", data.id ?: 0) // Kirim hanya ID event ke DetailFragment
+                putInt("event_id", data.id ?: 0)
             }
             findNavController().navigate(R.id.action_finishedFragment_to_detailFragment, bundle)
         }
@@ -76,28 +76,27 @@ class FinishedFragment : Fragment() {
         binding.rvFinished.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.rvFinished.adapter = adapter
-        adapter.showShimmerEffect() // Tampilkan shimmer saat loading
+        adapter.showShimmerEffect()
     }
 
     // Setup Search Functionality
     private fun setupSearch() {
-        // Tampilkan SearchView ketika SearchBar diklik
         binding.searchBar.setOnClickListener {
-            binding.searchView.show() // Show the Material SearchView
+            binding.searchView.show()
         }
 
         // Handle query submit dari keyboard
         binding.searchView.editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) { // Deteksi action "search"
-                val query = binding.searchView.text.toString().trim() // Ambil query
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = binding.searchView.text.toString().trim()
                 if (query.isNotBlank()) {
-                    currentQuery = query // Simpan query saat ini
+                    currentQuery = query
                     // Fetch event berdasarkan query yang dimasukkan oleh user
                     eventViewModel.fetchFinishedEvents(query)
                 } else {
                     Toast.makeText(context, "Please enter a search term", Toast.LENGTH_SHORT).show()
                 }
-                binding.searchView.hide() // Sembunyikan SearchView setelah submit
+                binding.searchView.hide()
                 true
             } else {
                 false
@@ -107,19 +106,19 @@ class FinishedFragment : Fragment() {
         // Handle saat SearchView di-close
         binding.searchView.addTransitionListener { _, _, newState ->
             if (newState == SearchView.TransitionState.HIDDEN && binding.searchView.text.isNullOrBlank()) {
-                currentQuery = null // Reset query
+                currentQuery = null
                 // Fetch ulang event tanpa query jika pencarian dikosongkan
                 eventViewModel.fetchFinishedEvents(null)
             }
         }
     }
-    // Menyimpan posisi scroll pada RecyclerView
+
     private fun saveScrollPosition() {
         val layoutManager = binding.rvFinished.layoutManager as StaggeredGridLayoutManager
         scrollState = layoutManager.findFirstVisibleItemPositions(null)
     }
 
-    // Mengembalikan posisi scroll yang disimpan sebelumnya
+
     private fun restoreScrollPosition() {
         scrollState?.let {
             val layoutManager = binding.rvFinished.layoutManager as StaggeredGridLayoutManager
@@ -127,30 +126,30 @@ class FinishedFragment : Fragment() {
         }
     }
 
-    // Mengamati perubahan LiveData dari ViewModel dan menampilkan data di RecyclerView
+
     private fun observeViewModel() {
         eventViewModel.finishedEvents.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {
                     saveScrollPosition()
-                    adapter.showShimmerEffect() // Tampilkan efek shimmer saat loading
+                    adapter.showShimmerEffect()
                 }
 
                 is NetworkResult.Success -> {
-                    adapter.hideShimmerEffect() // Hide shimmer setelah data siap
+                    adapter.hideShimmerEffect()
                     result.data?.let { events ->
                         if (events.isNotEmpty()) {
-                            adapter.submitList(events) // Tampilkan events di RecyclerView
+                            adapter.submitList(events)
                             restoreScrollPosition()
                         } else {
-                            adapter.submitList(emptyList()) // Kosongkan list jika tidak ada event
+                            adapter.submitList(emptyList())
                         }
                     }
                 }
 
                 is NetworkResult.Error -> {
-                    adapter.hideShimmerEffect() // Hide shimmer jika terjadi error
-                    adapter.submitList(emptyList()) // Kosongkan list pada error
+                    adapter.hideShimmerEffect()
+                    adapter.submitList(emptyList())
                     Toast.makeText(context, result.message ?: "An unknown error occurred", Toast.LENGTH_SHORT).show()
                 }
             }

@@ -39,7 +39,7 @@ class UpcomingFragment : Fragment() {
         val factory = ViewModelFactory(
             application = requireActivity().application,
             repository = Injection.provideEventRepository(),
-            owner = this // 'this' refers to Fragment as SavedStateRegistryOwner
+            owner = this
         )
 
         eventViewModel = ViewModelProvider(this, factory)[EventViewModel::class.java]
@@ -59,7 +59,7 @@ class UpcomingFragment : Fragment() {
 
         adapter.setOnItemClickListener { data ->
             val bundle = Bundle().apply {
-                putInt("event_id", data.id ?: 0) // Kirim hanya ID event ke DetailFragment
+                putInt("event_id", data.id ?: 0)
             }
             findNavController().navigate(R.id.action_upcomingFragment_to_detailFragment, bundle)
         }
@@ -69,7 +69,7 @@ class UpcomingFragment : Fragment() {
         adapter = AdapterUpcoming()
         binding.rvUpcoming.layoutManager = LinearLayoutManager(context)
         binding.rvUpcoming.adapter = adapter
-        adapter.showShimmerEffect() // Tampilkan shimmer saat loading
+        adapter.showShimmerEffect()
     }
 
     private fun observeViewModel() {
@@ -78,7 +78,7 @@ class UpcomingFragment : Fragment() {
             when (result) {
                 is NetworkResult.Loading -> {
                     showLoadingIndicator()
-                    adapter.showShimmerEffect() // Tampilkan shimmer saat data sedang di-fetch
+                    adapter.showShimmerEffect()
                 }
 
                 is NetworkResult.Success -> {
@@ -87,9 +87,9 @@ class UpcomingFragment : Fragment() {
 
                     result.data?.let { events ->
                         if (events.isNotEmpty()) {
-                            adapter.submitList(events)  // Tampilkan data di RecyclerView
+                            adapter.submitList(events)
                         } else {
-                            adapter.submitList(emptyList()) // Kosongkan list jika tidak ada data
+                            adapter.submitList(emptyList())
                             Toast.makeText(context, "No events found", Toast.LENGTH_SHORT).show()
                         }
                     }

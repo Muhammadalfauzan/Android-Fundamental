@@ -36,7 +36,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ViewModel initialization
         val factory = ViewModelFactory(
             application = requireActivity().application,
             repository = Injection.provideEventRepository(),
@@ -48,11 +47,11 @@ class HomeFragment : Fragment() {
 
         // Fetch upcoming and finished events
         if (!eventViewModel.hasFetchedUpcomingEvents) {
-            eventViewModel.fetchUpcomingEvents() // Default nilai query dan limit
+            eventViewModel.fetchUpcomingEvents()
         }
 
         if (!eventViewModel.hasFetchedFinishedEvents) {
-            eventViewModel.fetchFinishedEvents() // Default nilai query dan limit
+            eventViewModel.fetchFinishedEvents()
         }
 
         setupAdapterClickListeners()
@@ -73,17 +72,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupAdapterClickListeners() {
-        // Navigate to DetailFragment when an item is clicked in upcomingAdapter
+
         upcomingAdapter.setOnItemClickListenerhome { data ->
             navigateToDetailFragment(data.id)
         }
 
-        // Navigate to DetailFragment when an item is clicked in finishedAdapter
+
         finishedAdapter.setOnItemClickListener { data ->
             navigateToDetailFragment(data.id)
         }
     }
-    // Function to navigate to DetailFragment
+
     private fun navigateToDetailFragment(eventId: Int?) {
         val bundle = Bundle().apply {
             putInt("event_id", eventId ?: 0)
@@ -92,7 +91,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observe upcoming events
+
         eventViewModel.upcomingEvents.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {
@@ -122,7 +121,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Observe finished events
         eventViewModel.finishedEvents.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {

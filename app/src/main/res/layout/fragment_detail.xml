@@ -16,7 +16,8 @@
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerDetail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -66,38 +67,40 @@
 
         <TextView
             android:id="@+id/tv_diselengara"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/dicoding_event"
             android:fontFamily="@font/poppins_regular"
+            android:text="@string/dicoding_event"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/lb_penyelenggara"
-            app:layout_constraintTop_toTopOf="@+id/lb_penyelenggara" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/lb_penyelenggara"
+            app:layout_constraintTop_toBottomOf="@+id/lb_penyelenggara" />
 
         <TextView
             android:id="@+id/tv_waktuAcara"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/waktu_acara"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_semi_bold"
-            android:textSize="16sp"
             android:layout_marginEnd="16sp"
+            android:textAlignment="center"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/poppins_semi_bold"
+            android:text="@string/waktu_acara"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_sisaKouta"
             app:layout_constraintTop_toTopOf="@+id/lb_sisaKouta" />
 
         <TextView
             android:id="@+id/lb_sisaKouta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sisa_kouta"
-            android:layout_marginStart="16sp"
-            android:textSize="16sp"
             android:fontFamily="@font/poppins_semi_bold"
+            android:text="@string/sisa_kouta"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lb_penyelenggara" />
+            app:layout_constraintStart_toStartOf="@+id/tv_diselengara"
+            app:layout_constraintTop_toBottomOf="@+id/tv_diselengara" />
 
         <TextView
             android:id="@+id/tv_sisaKouta"
@@ -105,21 +108,23 @@
             android:layout_height="wrap_content"
             android:text="@string/kouta"
             android:textSize="16sp"
+            android:paddingStart="5dp"
             android:fontFamily="@font/poppins_semi_bold"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/lb_sisaKouta"
             app:layout_constraintTop_toTopOf="@+id/lb_sisaKouta" />
+
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
-            android:textSize="16sp"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_regular"
             android:text="@string/informasi"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lb_sisaKouta" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_waktuAcara" />
 
         <TextView
             android:id="@+id/tv_informasi"
