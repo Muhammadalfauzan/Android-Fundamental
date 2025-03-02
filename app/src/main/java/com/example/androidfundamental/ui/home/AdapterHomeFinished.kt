@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.androidfundamental.data.apimodel.ListEventsItem
+import com.example.androidfundamental.data.remote.response.ListEventsItem
 import com.example.androidfundamental.databinding.ItemFinishedHomeBinding
 import com.example.androidfundamental.databinding.ShimmerFinishedBinding
 
@@ -44,16 +44,16 @@ class AdapterHomeFinished : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
         val shimmerFrameLayout: com.facebook.shimmer.ShimmerFrameLayout = binding.shimmerFinished
     }
 
-    // Fungsi untuk menampilkan shimmer effect
+
     fun showShimmerEffect() {
         isLoading = true
-        notifyDataSetChanged() // Refresh adapter untuk memulai loading
+        notifyDataSetChanged()
     }
 
-    // Fungsi untuk menyembunyikan shimmer effect
+
     fun hideShimmerEffect() {
         isLoading = false
-        notifyDataSetChanged() // Refresh adapter untuk menampilkan data
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -72,7 +72,7 @@ class AdapterHomeFinished : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
                 holder.shimmerFrameLayout.startShimmer()
             }
         } else {
-            val event = getItem(position) // Mengambil item dengan aman
+            val event = getItem(position)
             if (holder is ListViewHolder) {
                 holder.bind(event)
             }

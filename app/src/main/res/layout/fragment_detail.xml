@@ -47,8 +47,9 @@
             android:text="@string/nama_acara"
             android:textAlignment="center"
             android:textSize="18sp"
+            android:padding="5dp"
             android:fontFamily="@font/poppins_semi_bold"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/img_logoDetail" />
@@ -108,7 +109,6 @@
             android:layout_height="wrap_content"
             android:text="@string/kouta"
             android:textSize="16sp"
-            android:paddingStart="5dp"
             android:fontFamily="@font/poppins_semi_bold"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/lb_sisaKouta"
@@ -160,6 +160,22 @@
             app:layout_constraintEnd_toEndOf="@+id/tv_informasi"
             app:layout_constraintStart_toStartOf="@+id/tv_informasi"
             app:layout_constraintTop_toBottomOf="@+id/tv_informasi" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="28dp"
+            android:backgroundTint="@color/white"
+            android:contentDescription="@string/add_favorite"
+            android:src="@drawable/ic_favorite_border"
+            app:layout_constraintBottom_toTopOf="@+id/tv_namaAcara"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/img_logoDetail"
+            app:layout_constraintVertical_bias="1.0">
+
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

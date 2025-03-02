@@ -12,22 +12,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androidfundamental.R
-import com.example.androidfundamental.data.apimodel.ListEventsItem
+import com.example.androidfundamental.data.remote.response.ListEventsItem
 
 @SuppressLint("NotifyDataSetChanged")
 class AdapterUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var onItemClickListener: ((ListEventsItem) -> Unit)? = null
-    private var isLoading = true // Flag untuk menandakan loading state
-    private var shimmerItemCount = 10 // Jumlah item shimmer saat loading
+    private var isLoading = true
+    private var shimmerItemCount = 10
 
-    // ViewHolder untuk shimmer loading
     class ShimmerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val shimmerFrameLayout: com.facebook.shimmer.ShimmerFrameLayout =
             itemView.findViewById(R.id.shimmerFrame)
     }
 
-    // ViewHolder untuk event
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageEvent: ImageView = itemView.findViewById(R.id.imgLogo)
         private val eventName: TextView = itemView.findViewById(R.id.judulEvent)
@@ -72,7 +70,7 @@ class AdapterUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>(DIF
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (isLoading) {
             if (holder is ShimmerViewHolder) {
-                holder.shimmerFrameLayout.startShimmer() // Mulai shimmer saat loading
+                holder.shimmerFrameLayout.startShimmer()
             }
         } else {
             if (holder is ListViewHolder) {

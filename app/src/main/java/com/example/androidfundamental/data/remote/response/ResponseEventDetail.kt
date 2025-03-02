@@ -1,4 +1,4 @@
-package com.example.androidfundamental.data.apimodel
+package com.example.androidfundamental.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -11,5 +11,5 @@ data class ResponseEventDetail(
     val message: String? = null,
 
     @field:SerializedName("event")
-    val event: ListEventsItem? = null // Use the existing ListEventsItem class
+    val event: ListEventsItem? = null
 )

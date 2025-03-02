@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.androidfundamental.data.apimodel.ListEventsItem
+import com.example.androidfundamental.data.remote.response.ListEventsItem
 import com.example.androidfundamental.databinding.ItemUpcomingHomeBinding
 import com.example.androidfundamental.databinding.ShimmerUpcomingBinding
 
@@ -18,7 +18,6 @@ class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
     private var isLoading = true
     private var shimmerItemCount = 3
 
-    // ViewHolder untuk event menggunakan View Binding
     inner class ListViewHolder(private val binding: ItemUpcomingHomeBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(data: ListEventsItem?) {
@@ -46,13 +45,13 @@ class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
 
     fun showShimmerEffect() {
         isLoading = true
-        notifyDataSetChanged() // Refresh adapter untuk memulai loading
+        notifyDataSetChanged()
     }
 
     // Fungsi untuk menyembunyikan shimmer effect
     fun hideShimmerEffect() {
         isLoading = false
-        notifyDataSetChanged() // Refresh adapter untuk menampilkan data
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -71,7 +70,7 @@ class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
                 holder.shimmerFrameLayout.startShimmer()
             }
         } else {
-            val event = getItem(position) // Mengambil item dengan aman
+            val event = getItem(position)
             if (holder is ListViewHolder) {
                 holder.bind(event)
             }
@@ -86,7 +85,6 @@ class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
         }
     }
 
-    // Menentukan ViewType (shimmer atau normal)
     override fun getItemViewType(position: Int): Int {
         return if (isLoading) {
             VIEW_TYPE_LOADING
@@ -95,7 +93,7 @@ class AdapterHomeUpcoming : ListAdapter<ListEventsItem, RecyclerView.ViewHolder>
         }
     }
 
-    // Fungsi untuk mengatur listener klik
+    //   listener klik
     fun setOnItemClickListenerhome(listener: (ListEventsItem) -> Unit) {
         onItemClickListener = listener
     }

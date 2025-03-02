@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/upcomingFragment">
 
     <fragment
         android:id="@+id/finishedFragment"
@@ -16,18 +16,19 @@
             android:id="@+id/action_finishedFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.androidfundamental.ui.fragment.HomeFragment"
-        android:label="fragment_homw"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_upcomingFragment"
-            app:destination="@id/upcomingFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
-    </fragment>
+
+<!--    <fragment-->
+<!--        android:id="@+id/homeFragment"-->
+<!--        android:name="com.example.androidfundamental.utils.ui.fragment.HomeFragment"-->
+<!--        android:label="fragment_homw"-->
+<!--        tools:layout="@layout/fragment_home" >-->
+<!--        <action-->
+<!--            android:id="@+id/action_homeFragment_to_upcomingFragment"-->
+<!--            app:destination="@id/upcomingFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_homeFragment_to_detailFragment"-->
+<!--            app:destination="@id/detailFragment" />-->
+<!--    </fragment>-->
     <fragment
         android:id="@+id/upcomingFragment"
         android:name="com.example.androidfundamental.ui.fragment.UpcomingFragment"
@@ -49,5 +50,19 @@
             android:id="@+id/action_detailFragment_to_finishedFragment"
             app:destination="@id/finishedFragment"
             />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.androidfundamental.ui.fragment.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.example.androidfundamental.ui.fragment.FavoriteFragment"
+        android:label="fragment_favorite"
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 </navigation>

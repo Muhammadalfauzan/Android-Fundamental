@@ -1,4 +1,4 @@
-package com.example.androidfundamental.data.api
+package com.example.androidfundamental.data.remote.retrofit
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

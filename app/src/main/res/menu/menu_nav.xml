@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/homeFragment"
-        android:title="@string/menu_home"
-        android:icon="@drawable/baseline_home_filled_24"/>
 
     <item android:id="@+id/upcomingFragment"
         android:title="@string/menu_upcoming"
         android:icon="@drawable/baseline_upcoming_24"/>
-
     <item android:id="@+id/finishedFragment"
         android:title="@string/menu_finished"
         android:icon="@drawable/round_view_quilt_24"/>
+
+<!--    <item android:id="@+id/homeFragment"-->
+<!--        android:title="@string/menu_home"-->
+<!--        android:icon="@drawable/baseline_home_filled_24"/>-->
+    <item android:id = "@+id/favoriteFragment"
+        android:title="@string/menu_favorite"
+        android:icon="@drawable/ic_favorit"/>
+
+
+    <item android:id="@+id/settingFragment"
+        android:title="@string/menu_setting"
+        android:icon="@drawable/baseline_settings_24"/>
 </menu>

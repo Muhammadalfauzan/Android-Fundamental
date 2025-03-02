@@ -1,201 +1,89 @@
 package com.example.androidfundamental.ui.upcoming
 
-
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.example.androidfundamental.utils.NetworkResult
-import com.example.androidfundamental.data.apimodel.EventRepository
-import com.example.androidfundamental.data.apimodel.ListEventsItem
-import com.example.androidfundamental.data.apimodel.ResponseUpcoming
+import androidx.lifecycle.*
+import com.example.androidfundamental.data.local.entity.FavoriteEvent
+import com.example.androidfundamental.data.Resource
+import com.example.androidfundamental.data.EventRepository
+import com.example.androidfundamental.data.remote.response.ListEventsItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Response
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.distinctUntilChanged
-import com.example.androidfundamental.data.apimodel.ResponseEventDetail
+
 
 class EventViewModel(
     private val repository: EventRepository,
-    private val savedStateHandle: SavedStateHandle,
-    application: Application
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    // LiveData untuk upcoming events
-    private val _upcomingEvents = MutableLiveData<NetworkResult<List<ListEventsItem?>>>()
-    val upcomingEvents: LiveData<NetworkResult<List<ListEventsItem?>>> =
-        _upcomingEvents.distinctUntilChanged()
+    val upcomingEvents: LiveData<Resource<List<ListEventsItem?>>> =
+        repository.getEvents(active = 1, query = null, limit = 40)
 
-    // LiveData untuk finished events
-    private val _finishedEvents = MutableLiveData<NetworkResult<List<ListEventsItem?>>>()
-    val finishedEvents: LiveData<NetworkResult<List<ListEventsItem?>>> =
-        _finishedEvents.distinctUntilChanged()
+    val favoriteEvents: LiveData<List<FavoriteEvent>> = repository.getAllFavoriteEvents()
+    private val _isFavorite = MutableStateFlow(false)
 
-    // LiveData untuk event detail
-    private val _eventDetail = MutableLiveData<NetworkResult<ListEventsItem>>()
-    val eventDetail: LiveData<NetworkResult<ListEventsItem>> = _eventDetail
+    val isFavorite: StateFlow<Boolean> get() = _isFavorite
 
-    // Query terakhir yang digunakan
-    private var lastQuery: String?
-        get() = savedStateHandle["lastQuery"]
-        set(value) = savedStateHandle.set("lastQuery", value)
+    private val finishedEvents: LiveData<Resource<List<ListEventsItem?>>> =
+        repository.getEvents(active = 0, query = null, limit = 40)
 
-    // Menyimpan apakah data sudah di-fetch
-    var hasFetchedUpcomingEvents: Boolean
-        get() = savedStateHandle["hasFetchedUpcomingEvents"] ?: false
-        set(value) = savedStateHandle.set("hasFetchedUpcomingEvents", value)
 
-    var hasFetchedFinishedEvents: Boolean
-        get() = savedStateHandle["hasFetchedFinishedEvents"] ?: false
-        set(value) = savedStateHandle.set("hasFetchedFinishedEvents", value)
+    private val finishedQueryLiveData = MutableLiveData<String?>()
+    private val searchedFinishedEvents: LiveData<Resource<List<ListEventsItem?>>> =
+        finishedQueryLiveData.switchMap { query ->
+            repository.getEvents(active = 0, query = query, limit = 40)
+        }
+    val finalFinishedEvents = MediatorLiveData<Resource<List<ListEventsItem?>>>()
 
-    // Fetch upcoming events
-    fun fetchUpcomingEvents(query: String? = null, limit: Int = 40) {
-        if (query != lastQuery || !hasFetchedUpcomingEvents) {
-            viewModelScope.launch {
-                _upcomingEvents.postValue(NetworkResult.Loading())
+    init {
+        finalFinishedEvents.addSource(finishedEvents) { result ->
+            if (finishedQueryLiveData.value.isNullOrEmpty()) {
+                finalFinishedEvents.value = result
+            }
+        }
+        finalFinishedEvents.addSource(searchedFinishedEvents) { result ->
+            finalFinishedEvents.value = result
+        }
+    }
 
-                if (hasInternetConnection()) {
-                    try {
-                        val response = repository.getEvents(active = 1, query = query, limit = limit)
-                        val result = handleEventResponse(response)
-                        _upcomingEvents.postValue(result) // Gunakan fungsi handleEventResponse
+    fun searchFinishedEvents(query: String?) {
+        finishedQueryLiveData.value = query
+    }
 
-                        if (result is NetworkResult.Success) {
-                            hasFetchedUpcomingEvents = true
-                            lastQuery = query // Simpan query terakhir
-                            savedStateHandle["upcomingEvents"] = result.data // Simpan data
-                        }
+    fun getEventDetail(id: Int): LiveData<Resource<ListEventsItem?>> {
+        val result = MutableLiveData<Resource<ListEventsItem?>>()
+        result.value = Resource.Loading
 
-                    } catch (e: Exception) {
-                        _upcomingEvents.postValue(NetworkResult.Error("Error: ${e.message}"))
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = repository.getEventDetail(id).execute()
+                if (response.isSuccessful) {
+                    val eventDetail = response.body()?.event
+                    result.postValue(Resource.Success(eventDetail))
                 } else {
-                    _upcomingEvents.postValue(NetworkResult.Error("No internet connection"))
+                    result.postValue(Resource.Error("Gagal mengambil data event"))
                 }
-            }
-        } else {
-            _upcomingEvents.postValue(
-                NetworkResult.Success(savedStateHandle["upcomingEvents"] ?: emptyList())
-            )
-        }
-    }
-
-    // Fetch finished events (untuk mendukung pencarian query)
-    fun fetchFinishedEvents(query: String? = null, limit: Int = 40) {
-        if (query != lastQuery || !hasFetchedFinishedEvents) {
-            viewModelScope.launch {
-                _finishedEvents.postValue(NetworkResult.Loading())
-
-                if (hasInternetConnection()) {
-                    try {
-                        val response =
-                            repository.getEvents(active = 0, query = query, limit = limit)
-                        val result = handleEventResponse(response)
-                        _finishedEvents.postValue(result) // Gunakan fungsi handleEventResponse
-
-                        if (result is NetworkResult.Success) {
-                            hasFetchedFinishedEvents = true
-                            lastQuery = query // Simpan query terakhir
-                            savedStateHandle["finishedEvents"] = result.data // Simpan data
-                        }
-
-                    } catch (e: Exception) {
-                        _finishedEvents.postValue(NetworkResult.Error("Error: ${e.message}"))
-                    }
-                } else {
-                    _finishedEvents.postValue(NetworkResult.Error("No internet connection"))
-                }
-            }
-        } else {
-            _finishedEvents.postValue(
-                NetworkResult.Success(savedStateHandle["finishedEvents"] ?: emptyList())
-            )
-        }
-    }
-
-    // Fetch event detail dari repository berdasarkan event ID
-    fun fetchEventDetail(id: Int) {
-        viewModelScope.launch {
-            _eventDetail.postValue(NetworkResult.Loading()) // Set state to loading
-            Log.d("EventViewModel", "Fetching event detail from API with id: $id")
-
-            if (hasInternetConnection()) {
-                try {
-                    val response = repository.getEventDetail(id)
-                    _eventDetail.postValue(handleEventDetailResponse(response))
-                } catch (e: Exception) {
-                    _eventDetail.postValue(NetworkResult.Error("Error: ${e.message}"))
-                    Log.e("EventViewModel", "Error while fetching event detail: ${e.message}", e)
-                }
-            } else {
-                _eventDetail.postValue(NetworkResult.Error("No internet connection"))
+            } catch (e: Exception) {
+                result.postValue(Resource.Error("Terjadi kesalahan: ${e.message}"))
             }
         }
+
+        return result
     }
 
-    // Fungsi untuk menangani response detail event
-    private fun handleEventDetailResponse(response: Response<ResponseEventDetail>): NetworkResult<ListEventsItem> {
-        return when {
-            response.message().toString().contains("timeout", ignoreCase = true) -> {
-                NetworkResult.Error("Timeout occurred")
-            }
-
-            response.code() == 402 -> {
-                NetworkResult.Error("API Key Limited")
-            }
-
-            response.isSuccessful -> {
-                response.body()?.event?.let { event ->
-                    NetworkResult.Success(event)
-                } ?: NetworkResult.Error("Event detail not found")
-            }
-
-            else -> {
-                NetworkResult.Error("Error: ${response.message()}")
-            }
-        }
+    fun addToFavorite(event: FavoriteEvent) {
+        repository.addToFavorite(event)
+        _isFavorite.value = true
     }
 
-    // Helper function untuk cek koneksi internet
-    private fun hasInternetConnection(): Boolean {
-        val connectivityManager =
-            getApplication<Application>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+
+    fun removeFromFavorite(eventId: Int) {
+        repository.removeFromFavorite(eventId)
+        _isFavorite.value = false
     }
 
-    // Helper untuk handle response API events list
-    private fun handleEventResponse(response: Response<ResponseUpcoming>): NetworkResult<List<ListEventsItem?>> {
-        return when {
-            response.message().toString().contains("timeout", ignoreCase = true) -> {
-                NetworkResult.Error("Timeout occurred")
-            }
-
-            response.code() == 402 -> {
-                NetworkResult.Error("API Key Limited")
-            }
-
-            response.isSuccessful -> {
-                val events = response.body()?.listEvents?.filterNotNull()
-                if (!events.isNullOrEmpty()) {
-                    NetworkResult.Success(events)
-                } else {
-                    NetworkResult.Error("No events found")
-                }
-            }
-
-            else -> {
-                NetworkResult.Error("Error: ${response.message()}")
-            }
+    fun checkFavoriteStatus(eventId: Int) {
+        repository.isFavorite(eventId) { isFav ->
+            _isFavorite.value = isFav
         }
     }
 }
-
-

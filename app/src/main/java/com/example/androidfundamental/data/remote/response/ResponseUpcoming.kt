@@ -1,4 +1,4 @@
-package com.example.androidfundamental.data.apimodel
+package com.example.androidfundamental.data.remote.response
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
@@ -49,7 +49,7 @@ data class ListEventsItem(
 	val name: String? = null,
 
 	@field:SerializedName("id")
-	val id: Int? = null,
+	val id: Int ,
 
 	@field:SerializedName("beginTime")
 	val beginTime: String? = null,

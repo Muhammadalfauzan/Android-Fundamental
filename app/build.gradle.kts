@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id ("kotlin-parcelize")
     id ("androidx.navigation.safeargs.kotlin")
+    id  ("com.google.devtools.ksp")
 }
 
 android {
@@ -62,4 +63,13 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.1.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.room.compiler)
 }
